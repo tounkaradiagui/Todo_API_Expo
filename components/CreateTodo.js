@@ -17,11 +17,10 @@ const CreateTodo = () => {
 
         axios.post(`http://192.168.251.140:3000/api/todo/create`, data).then((res) => {
             setTitle(res.data.title);
-            Alert.alert("Félicitaions !", "La tache ajoutée avec succès");
-            setLoading(false)
+            Alert.alert("Félicitations !", "La tache ajoutée avec succès");
             setTimeout(() => {
                 navigation.goBack("Todo")
-            }, 500)
+            }, 5000)
             
         }).catch((error) => {
             console.log(error);
@@ -39,7 +38,6 @@ const CreateTodo = () => {
         <TouchableOpacity style={{padding:15, backgroundColor:"gold", width:110, marginTop:20, }} onPress={handleAddTodo}>
             <Text style={{fontSize:16, fontWeight:"500"}}>Enregistrer</Text>
         </TouchableOpacity>
-        
     </View>
   )
 }
