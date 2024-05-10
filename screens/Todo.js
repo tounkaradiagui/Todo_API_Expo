@@ -7,7 +7,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
 
 const Todo = () => {
-    const [todo, setTodo] = useState([]);
+    const [todos, setTodos] = useState([]);
     // const {id} = route.params;
     const navigation = useNavigation();
 
@@ -16,7 +16,7 @@ const Todo = () => {
           const response = await axios.get("http://192.168.251.140:3000/api/todo");
           const todo = response.data.data;
     
-          setTodo(todo);
+          setTodos(todo);
         } catch (error) {
           console.log("error", error);
         }
@@ -29,21 +29,11 @@ const Todo = () => {
         }, [])
     );
 
-    console.log("Liste de taches :", JSON.stringify(todo, null, 2));
-    
+    console.log("Liste de taches :", JSON.stringify(todos, null, 2));
 
-    const handleEditTodo = async ({item}) => {
-        setLoading(true)
-        try {
-            const response = await axios.get(`http://192.168.251.140:3000/api/todo/edit/${todo._id}`);
-                navigate('Modifier');
-                setTodo(res.data.data);
-                setLoading(false)
-        } catch (error) {
-            console.log(error);
-        }
-
-    }
+    const handleEditTodo = () => {
+        navigation.navigate('Modifier', { id: todos._id });
+    };
 
     const handleDeleteTodo = () => {
         Alert.alert(
@@ -64,8 +54,9 @@ const Todo = () => {
 
     const deleteTodo = async () => {
         try {
-            await axios.delete(`http://192.168.251.140:3000/api/todo/delete/66117a7dc5e4660cb42497a0`);
+            await axios.delete(`http://192.168.251.140:3000/api/todo/delete/66133f55232d24b12866985e`);
             Alert.alert("Félicitations", "La tache a été supprimée avec succès !");
+            console.log(todos);
         } catch (error) {
             console.log(error);
         }
@@ -73,27 +64,37 @@ const Todo = () => {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-        <View>
-            <View style={{flexDirection:"row", padding:10, alignItems:"center", justifyContent:"space-between", marginBottom:10}}>
-                <Text style={{fontWeight:"bold", fontSize:20}}>Liste de tâches :</Text>
-                <Pressable onPress={() => navigation.navigate('Ajouter')}>
-                    <AntDesign name="pluscircle" size={30} color="blue" />
-                </Pressable>
+        <ScrollView style={{ padding: 10 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={{ fontSize: 24, marginTop: 8, marginLeft: 5 }}>Liste de tâches</Text>
+            <TouchableOpacity style={{ fontSize: 20, marginRight: 5 }} onPress={() => navigation.navigate('Ajouter')}>
+                <AntDesign name="pluscircle" size={30} color="blue" />
+            </TouchableOpacity>
+        </View>
+            <View style={{ marginTop: 10 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: '#718093', paddingVertical: 5 }}>
+                <Text style={{ flex: 1, textAlign: 'center', fontWeight: 'bold' }}>ID</Text>
+                <Text style={{ flex: 1, textAlign: 'center', fontWeight: 'bold' }}>Titre</Text>
+                <Text style={{ flex: 1, textAlign: 'center', fontWeight: 'bold' }}>Statut</Text>
+                <Text style={{ flex: 1, textAlign: 'center', fontWeight: 'bold' }}>Actions</Text>
             </View>
-            {todo?.map((item) => (
-                <View style={{borderWidth:1, borderColor:"#d0D0D0", justifyContent:"space-between", flexDirection: "row", paddingHorizontal:10}}>
-                    <Text key={item._id} style={{padding:10}}>{item.title}</Text>
-                    <View style={{flexDirection:"row", gap:25, alignItems:"center"}}>
-                        <Link to={`/Modifier/${todo._id}`}>
+            {todos.map((todo) => (
+                <View key={todo._id} style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: '#718093', paddingVertical: 5 }}>
+                    <Text style={{ flex: 1, textAlign: 'center' }}>{todo._id}</Text>
+                    <Text style={{ flex: 1, textAlign: 'center' }}>{todo.title}</Text>
+                    <Text style={{ flex: 1, textAlign: 'center' }}>{todo.status}</Text>
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <TouchableOpacity onPress={handleEditTodo}>
                             <FontAwesome name="pencil-square-o" size={24} color="green" />
-                        </Link>
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={handleDeleteTodo}>
                             <FontAwesome6 name="trash" size={24} color="red" />
                         </TouchableOpacity>
                     </View>
                 </View>
             ))}
-        </View>
+            </View>
+        </ScrollView>
     </ScrollView>
   )
 }

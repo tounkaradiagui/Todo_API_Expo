@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigation } from '@react-navigation/native'
 
-const EditTodo = () => {
+const EditTodo = ({id}) => {
     const [title, setTitle] = useState("")
     const [todo, setTodo] = useState([])
     const [status, setStatus] = useState("")
@@ -11,16 +11,19 @@ const EditTodo = () => {
     const navigation = useNavigation();
 
     useEffect(() => {
-        setLoading(true)
-        axios.get(`http://192.168.251.140:3000/api/todo/edit/${todo._id}`).then((res) => {
-          setTodo(res.data.title)
-          setStatus(res.data.status)
-          setLoading(false)
-        }).catch((error) => {
-          console.log(error);
-          setLoading(false)
+      setLoading(true);
+      axios.get(`http://192.168.251.140:3000/api/todo/edit/${id}`)
+        .then((res) => {
+          setTodo(res.data[0]);
+          setTitle(res.data.title);
+          setStatus(res.data.status);
+          setLoading(false);
         })
-      }, []);
+        .catch((error) => {
+          console.log(error);
+          setLoading(false);
+        });
+    }, [id]);
 
   return (
     <View style={{padding:10}}>
